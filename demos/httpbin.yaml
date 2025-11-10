@@ -16,6 +16,7 @@ spec:
   values:
     ingress:
       enabled: true
+      className: traefik-external
       hosts:
         - host: httpbin.jabbas.eu
           paths:
