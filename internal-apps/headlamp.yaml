@@ -34,6 +34,12 @@ spec:
               type: ImplementationSpecific
     config:
       pluginsDir: /build/plugins
+      oidc:
+        secret:
+          create: false
+        externalSecret:
+          enabled: true
+          name: oidc-secret-headlamp
     initContainers:
       - command:
           - /bin/sh
