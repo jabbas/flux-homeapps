@@ -34,6 +34,8 @@ spec:
               type: ImplementationSpecific
     config:
       pluginsDir: /build/plugins
+      extraArgs:
+        - -oidc-ca-file=/etc/ssl/certs/jabbas-ca.crt
       oidc:
         secret:
           create: false
@@ -57,9 +59,19 @@ spec:
         volumeMounts:
           - mountPath: /build/plugins
             name: headlamp-plugins
+    env:
+      - name: SSL_CERT_FILE
+        value: /etc/ssl/certs/jabbas-ca.crt
     volumeMounts:
       - mountPath: /build/plugins
         name: headlamp-plugins
+      - mountPath: /etc/ssl/certs/jabbas-ca.crt
+        name: jabbas-ca
+        subPath: ca.crt
+        readOnly: true
     volumes:
       - name: headlamp-plugins
         emptyDir: {}
+      - name: jabbas-ca
+        secret:
+          secretName: jabbas-ca
