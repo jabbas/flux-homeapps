@@ -24,6 +24,22 @@ spec:
         name: headlamp
   interval: 1m0s
   values:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 100
+      runAsGroup: 101
+      fsGroup: 101
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      readOnlyRootFilesystem: false
+      seccompProfile:
+        type: RuntimeDefault
     ingress:
       enabled: true
       ingressClassName: traefik-internal
@@ -43,19 +59,23 @@ spec:
           enabled: true
           name: oidc-secret-headlamp
     initContainers:
-      - command:
-          - /bin/sh
-          - -c
-          - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins && chown -R 100:101 /build
-
+      - name: headlamp-plugins
         image: ghcr.io/headlamp-k8s/headlamp-plugin-flux:latest
         imagePullPolicy: Always
-        name: headlamp-plugins
+        command:
+          - /bin/sh
+          - -c
+          - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins
         securityContext:
-          runAsNonRoot: false
-          privileged: false
-          runAsUser: 0
-          runAsGroup: 0
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          runAsUser: 100
+          runAsGroup: 101
+          seccompProfile:
+            type: RuntimeDefault
         volumeMounts:
           - mountPath: /build/plugins
             name: headlamp-plugins
