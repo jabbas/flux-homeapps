@@ -4,6 +4,10 @@ kind: Secret
 metadata:
   name: jabbas-ca
   namespace: internal-apps
+  annotations:
+    reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+    reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "grafana"
+    reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
 type: Opaque
 stringData:
   ca.crt: |
