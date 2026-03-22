@@ -14,6 +14,12 @@ spec:
         name: httpbin
   interval: 1m0s
   values:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
     ingress:
       enabled: true
       className: traefik-external
