@@ -18,6 +18,11 @@ spec:
   chart:
     spec:
       chart: headlamp
+      # Pinned to 0.39.0 due to upstream bug in 0.40.x: chart renders -session-ttl flag
+      # which was removed from the binary, causing CrashLoopBackOff on startup.
+      # The values.schema.json enforces minimum: 1 so the flag cannot be suppressed via
+      # values override. Track fix at: https://github.com/kubernetes-sigs/headlamp/issues/4883
+      version: "0.39.0"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
