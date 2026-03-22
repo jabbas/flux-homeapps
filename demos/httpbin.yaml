@@ -20,6 +20,13 @@ spec:
         memory: 32Mi
       limits:
         memory: 64Mi
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: httpbin
     ingress:
       enabled: true
       className: traefik-external
