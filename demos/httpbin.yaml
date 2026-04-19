@@ -35,3 +35,7 @@ spec:
           paths:
             - path: /
               pathType: ImplementationSpecific
+        - host: httpbin.test.jabbas.eu
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
