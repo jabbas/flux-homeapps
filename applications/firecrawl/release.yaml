@@ -1,0 +1,89 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: firecrawl
+  namespace: firecrawl
+spec:
+  chart:
+    spec:
+      chart: ./applications/firecrawl/chart
+      reconcileStrategy: Revision
+      sourceRef:
+        kind: GitRepository
+        name: home-applications
+        namespace: flux-system
+  interval: 1m0s
+  timeout: 10m0s
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-api
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: firecrawl-firecrawl-api
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: api
+                        env:
+                          - name: POSTGRES_PASSWORD
+                            valueFrom:
+                              secretKeyRef:
+                                name: firecrawl-firecrawl-stack-db-app
+                                key: password
+                          - name: NUQ_DATABASE_URL
+                            value: "postgresql://firecrawl:$(POSTGRES_PASSWORD)@firecrawl-firecrawl-stack-db-rw:5432/firecrawl"
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-worker
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: firecrawl-firecrawl-worker
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: worker
+                        env:
+                          - name: POSTGRES_PASSWORD
+                            valueFrom:
+                              secretKeyRef:
+                                name: firecrawl-firecrawl-stack-db-app
+                                key: password
+                          - name: NUQ_DATABASE_URL
+                            value: "postgresql://firecrawl:$(POSTGRES_PASSWORD)@firecrawl-firecrawl-stack-db-rw:5432/firecrawl"
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-nuq-worker
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: firecrawl-firecrawl-nuq-worker
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: nuq-worker
+                        env:
+                          - name: POSTGRES_PASSWORD
+                            valueFrom:
+                              secretKeyRef:
+                                name: firecrawl-firecrawl-stack-db-app
+                                key: password
+                          - name: NUQ_DATABASE_URL
+                            value: "postgresql://firecrawl:$(POSTGRES_PASSWORD)@firecrawl-firecrawl-stack-db-rw:5432/firecrawl"

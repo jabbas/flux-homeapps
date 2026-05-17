@@ -1,0 +1,11 @@
+apiVersion: v2
+name: firecrawl-stack
+description: Self-hosted Firecrawl web scraping service with CNPG database
+type: application
+version: 0.1.0
+appVersion: "0.2.0"
+
+dependencies:
+  - name: firecrawl
+    version: "0.2.0"
+    repository: ""

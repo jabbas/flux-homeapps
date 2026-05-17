@@ -1,0 +1,23 @@
+{{- $fullname := include "firecrawl-stack.fullname" . -}}
+{{- $dbFullname := include "firecrawl-stack.database.fullname" . -}}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ $dbFullname }}
+  labels:
+    {{- include "firecrawl-stack.componentLabels" (dict "context" . "component" "database") | nindent 4 }}
+spec:
+  instances: {{ .Values.database.instances }}
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
+  bootstrap:
+    initdb:
+      database: firecrawl
+      owner: firecrawl
+  storage:
+    storageClass: {{ .Values.database.storageClass }}
+    size: {{ .Values.database.size }}
+  monitoring:
+    enablePodMonitor: false

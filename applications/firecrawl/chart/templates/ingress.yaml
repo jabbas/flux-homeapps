@@ -1,0 +1,89 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullname := include "firecrawl-stack.fullname" . -}}
+{{- $apiServiceName := printf "%s-firecrawl-api" .Release.Name -}}
+{{- if .Values.authentik.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $fullname }}-authentik-auth
+  labels:
+    {{- include "firecrawl-stack.labels" . | nindent 4 }}
+spec:
+  forwardAuth:
+    address: http://authentik-stack-server.authentik.svc.cluster.local/outpost.goauthentik.io/auth/traefik
+    trustForwardHeader: true
+    authResponseHeaders:
+      - X-authentik-username
+      - X-authentik-groups
+      - X-authentik-email
+{{- end }}
+---
+# API paths: no Authentik auth, rely on BULL_AUTH_KEY
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}-api
+  labels:
+    {{- include "firecrawl-stack.labels" . | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /v0
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $apiServiceName }}
+                port:
+                  number: 3002
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $apiServiceName }}
+                port:
+                  number: 3002
+          - path: /v2
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $apiServiceName }}
+                port:
+                  number: 3002
+{{- if .Values.authentik.enabled }}
+---
+# Admin UI: Authentik ForwardAuth
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}-ui
+  labels:
+    {{- include "firecrawl-stack.labels" . | nindent 4 }}
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      {{ .Release.Namespace }}-{{ $fullname }}-authentik-auth@kubernetescrd
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $apiServiceName }}
+                port:
+                  number: 3002
+          - path: /queues
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $apiServiceName }}
+                port:
+                  number: 3002
+{{- end }}
+{{- end }}
