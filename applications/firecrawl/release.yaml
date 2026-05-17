@@ -66,6 +66,17 @@ spec:
                                 key: password
                           - name: NUQ_DATABASE_URL
                             value: "postgresql://firecrawl:$(POSTGRES_PASSWORD)@firecrawl-firecrawl-stack-db-rw:5432/firecrawl"
+          # Scale upstream nuq-postgres to 0 (replaced by CNPG)
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-nuq-postgres
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: firecrawl-firecrawl-nuq-postgres
+              spec:
+                replicas: 0
           - target:
               kind: Deployment
               name: firecrawl-firecrawl-nuq-worker
