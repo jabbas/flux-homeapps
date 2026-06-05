@@ -35,6 +35,13 @@ firecrawl:
     tag: latest
     pullPolicy: Always
     replicaCount: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
 
   # Enable resource limits
   resources:
@@ -46,10 +53,10 @@ firecrawl:
     resources:
       requests:
         cpu: 250m
-        memory: 512Mi
+        memory: 256Mi
       limits:
         cpu: 1000m
-        memory: 2Gi
+        memory: 768Mi
 
   # Queue worker
   worker:
@@ -58,10 +65,10 @@ firecrawl:
     resources:
       requests:
         cpu: 250m
-        memory: 512Mi
+        memory: 256Mi
       limits:
         cpu: 1000m
-        memory: 2Gi
+        memory: 768Mi
 
   # NUQ worker (reduced from default 5 replicas)
   nuqWorker:
@@ -70,10 +77,10 @@ firecrawl:
     resources:
       requests:
         cpu: 100m
-        memory: 256Mi
+        memory: 128Mi
       limits:
         cpu: 500m
-        memory: 1Gi
+        memory: 512Mi
 
   # Disabled components
   rabbitmq:
@@ -106,6 +113,13 @@ firecrawl:
   redis:
     image: redis:7-alpine
     replicaCount: 1
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
 
   # Service ports
   service:

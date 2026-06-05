@@ -98,3 +98,45 @@ spec:
                                 key: password
                           - name: NUQ_DATABASE_URL
                             value: "postgresql://firecrawl:$(POSTGRES_PASSWORD)@firecrawl-firecrawl-stack-db-rw:5432/firecrawl"
+          # Add resource limits to playwright (not supported by upstream chart values)
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-playwright
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: firecrawl-firecrawl-playwright
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: playwright-service
+                        resources:
+                          requests:
+                            cpu: 100m
+                            memory: 256Mi
+                          limits:
+                            cpu: 500m
+                            memory: 512Mi
+          # Add resource limits to redis (not supported by upstream chart values)
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-redis
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: firecrawl-firecrawl-redis
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: redis
+                        resources:
+                          requests:
+                            cpu: 25m
+                            memory: 64Mi
+                          limits:
+                            cpu: 250m
+                            memory: 256Mi
