@@ -85,7 +85,7 @@ firecrawl:
   # Disabled components
   rabbitmq:
     enabled: true
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:4-management-alpine
     resources:
       requests:
         cpu: 100m
