@@ -8,6 +8,7 @@ spec:
   chart:
     spec:
       chart: httpbin
+      version: "1.0.0"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
