@@ -1,0 +1,98 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ibakery
+  namespace: ibakery
+spec:
+  releaseName: ibakery
+  chart:
+    spec:
+      chart: ibakery
+      version: "0.1.3"
+      sourceRef:
+        kind: HelmRepository
+        name: ibakery
+        namespace: ibakery
+  interval: 1m0s
+  timeout: 10m0s
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    ingress:
+      enabled: true
+      className: "traefik-external"
+      host: "marta.jabbas.eu"
+    database:
+      enabled: true
+      cluster:
+        instances: 2
+        affinity:
+          enablePodAntiAffinity: true
+          topologyKey: kubernetes.io/hostname
+        bootstrap:
+          initdb:
+            database: ibakery
+            owner: ibakery
+        storage:
+          size: 1Gi
+        backup:
+          volumeSnapshot:
+            className: democratic-csi
+            online: true
+            onlineConfiguration:
+              waitForArchive: true
+              immediateCheckpoint: true
+        monitoring:
+          enablePodMonitor: false
+      scheduledBackup:
+        schedule: "0 0 2 * * 1"
+        backupOwnerReference: self
+        method: volumeSnapshot
+    backend:
+      replicaCount: 1
+      ingress:
+        enabled: false
+      envSecret:
+        - name: PGHOST
+          secretName: "{{ .Release.Name }}-db-app"
+          key: host
+        - name: PGPORT
+          secretName: "{{ .Release.Name }}-db-app"
+          key: port
+        - name: PGUSER
+          secretName: "{{ .Release.Name }}-db-app"
+          key: username
+        - name: PGPASSWORD
+          secretName: "{{ .Release.Name }}-db-app"
+          key: password
+        - name: PGDATABASE
+          secretName: "{{ .Release.Name }}-db-app"
+          key: dbname
+        - name: SECRET_KEY
+          secretName: ibakery-app-secrets
+          key: SECRET_KEY
+        - name: SMSAPI_TOKEN
+          secretName: ibakery-app-secrets
+          key: SMSAPI_TOKEN
+        - name: MAIL_USERNAME
+          secretName: ibakery-app-secrets
+          key: MAIL_USERNAME
+        - name: MAIL_PASSWORD
+          secretName: ibakery-app-secrets
+          key: MAIL_PASSWORD
+    artisan:
+      replicaCount: 1
+      ingress:
+        enabled: false
+      apiUrl: "https://marta.jabbas.eu/api"
+      basePath: "/artisan/"
+    client:
+      replicaCount: 1
+      ingress:
+        enabled: false
+      apiUrl: "https://marta.jabbas.eu/api"

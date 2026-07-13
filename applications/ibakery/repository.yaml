@@ -1,0 +1,9 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: ibakery
+  namespace: ibakery
+spec:
+  url: https://jabbas.github.io/ibakery
+  interval: 24h

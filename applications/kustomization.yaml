@@ -4,3 +4,6 @@ kind: Kustomization
 resources:
   - firecrawl/namespace.yaml
   - firecrawl/release.yaml
+  - ibakery/namespace.yaml
+  - ibakery/repository.yaml
+  - ibakery/release.yaml
