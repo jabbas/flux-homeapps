@@ -6,4 +6,4 @@ metadata:
   namespace: ibakery
 spec:
   url: https://jabbas.github.io/ibakery
-  interval: 24h
+  interval: 10m
