@@ -14,6 +14,30 @@ spec:
         kind: HelmRepository
         name: ibakery
         namespace: ibakery
+  # SUSPENDED - do not remove without reading this.
+  #
+  # The release is stuck in a failed install: the backend references Secret
+  # "ibakery-app-secrets", which exists in no repository (it was created
+  # imperatively by hand and was lost around 2026-09-06). The pod therefore sits
+  # in CreateContainerConfigError, Helm never reaches ready, and the install
+  # times out after 10m.
+  #
+  # That alone would be harmless, but Flux's default install-remediation
+  # strategy is *uninstall*, and the CNPG Cluster "ibakery-db" is Helm-owned
+  # (meta.helm.sh/release-name: ibakery). The destruction chain is armed:
+  #   helm uninstall -> Cluster CR deleted -> PVCs garbage-collected via
+  #   controller ownerReference -> PVs deleted (reclaimPolicy: Delete) ->
+  #   ZFS datasets destroyed.
+  # The four VolumeSnapshots in this namespace - currently the only working
+  # backups anywhere in the cluster - are in the same blast radius.
+  #
+  # The data survives only because every uninstall attempt has itself timed out.
+  # Suspending stops Flux touching the release at all.
+  #
+  # To resume: create ibakery-app-secrets as a SealedSecret in this directory
+  # (keys SECRET_KEY, SMSAPI_TOKEN, MAIL_USERNAME, MAIL_PASSWORD), confirm the
+  # backend starts, then remove this flag.
+  suspend: true
   interval: 1m0s
   timeout: 10m0s
   install:
