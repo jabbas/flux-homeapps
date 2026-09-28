@@ -19,5 +19,30 @@ spec:
   storage:
     storageClass: {{ .Values.database.storageClass }}
     size: {{ .Values.database.size }}
+  backup:
+    volumeSnapshot:
+      className: {{ .Values.database.snapshotClassName }}
+      online: true
+      onlineConfiguration:
+        waitForArchive: true
+        immediateCheckpoint: true
   monitoring:
     enablePodMonitor: false
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ $dbFullname }}-weekly
+  labels:
+    {{- include "firecrawl-stack.componentLabels" (dict "context" . "component" "database") | nindent 4 }}
+spec:
+  # SIX-field cron with a leading seconds field (robfig/cron), NOT the
+  # five-field Unix/Kubernetes format. A five-field value passes validation but
+  # is silently shifted, so the weekday is consumed as the month - which is how
+  # authentik-stack-db ended up with zero backups for 22 days.
+  # Format: <sec> <min> <hour> <day-of-month> <month> <day-of-week>
+  schedule: {{ .Values.database.backupSchedule | quote }}
+  backupOwnerReference: self
+  cluster:
+    name: {{ $dbFullname }}
+  method: volumeSnapshot
