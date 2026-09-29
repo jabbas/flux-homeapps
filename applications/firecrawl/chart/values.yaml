@@ -7,7 +7,10 @@ fullnameOverride: ""
 database:
   instances: 2
   size: 1Gi
-  storageClass: zfs-nfs-csi
+  # CNPG does not reconcile storageClass on existing PVCs; this field applies
+  # only to newly created volumes. Each instance must be re-created once
+  # (replica first, then switchover, then the former primary) to move over.
+  storageClass: zfs-iscsi-db
   snapshotClassName: democratic-csi
   # Six-field cron (seconds first). Staggered 30 minutes after authentik and
   # ibakery so the three clusters do not checkpoint and snapshot simultaneously.
