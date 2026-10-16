@@ -1,0 +1,70 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homebudget
+  namespace: homebudget
+spec:
+  releaseName: homebudget
+  chart:
+    spec:
+      chart: ./helm
+      reconcileStrategy: Revision
+      sourceRef:
+        kind: GitRepository
+        name: homebudget
+        namespace: homebudget
+  interval: 1m0s
+  timeout: 10m0s
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  # Token administracyjny i rpc_secret Garage są WARTOŚCIAMI Helma
+  # (garage.subchart.adminToken/rpcSecret — subchart Garage, Zadanie 8,
+  # renderuje je do WŁASNEGO Secretu), nie odwołaniami do sekretu
+  # istniejącego z zewnątrz — stąd valuesFrom+targetPath, nie
+  # secretName+secretKeyRef jak jwtSecret/garage.credentials niżej.
+  # Patrz decyzja 21.
+  valuesFrom:
+    - kind: Secret
+      name: homebudget-garage-admin
+      valuesKey: adminToken
+      targetPath: garage.subchart.adminToken
+    - kind: Secret
+      name: homebudget-garage-admin
+      valuesKey: rpcSecret
+      targetPath: garage.subchart.rpcSecret
+  values:
+    jwtSecret:
+      secretName: homebudget-jwt
+    # Klasa storage'u: blokowa (iSCSI) z polityką Retain — dane przeżywają
+    # usunięcie PVC (np. pomyłkowy helm uninstall). Ta sama klasa co zdrowe
+    # klastry CNPG w tym klastrze. Chart celowo jej nie narzuca (przenośność),
+    # stąd nadpisanie tutaj.
+    postgres:
+      operator:
+        storage:
+          storageClassName: zfs-iscsi-db
+    garage:
+      credentials:
+        secretName: homebudget-garage-credentials
+      subchart:
+        persistence:
+          # Oba wolumeny Garage (meta + data). Metadane Garage to SQLite —
+          # NIGDY NFS (blokady plikowe na NFS = ciche uszkodzenie bazy).
+          storageClassName: zfs-iscsi-db
+      init:
+        image:
+          # Musi być TYM SAMYM SHA co GitRepository.spec.ref.commit
+          # (repository.yaml) i api.image.tag/web.image.tag niżej — patrz
+          # decyzja 20.
+          tag: "1c72e27d7e0c03864d4261fead13457436370dbf"
+    api:
+      image:
+        tag: "1c72e27d7e0c03864d4261fead13457436370dbf"
+    web:
+      image:
+        tag: "1c72e27d7e0c03864d4261fead13457436370dbf"

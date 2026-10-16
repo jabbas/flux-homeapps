@@ -1,0 +1,24 @@
+---
+# Repozytorium PUBLICZNE — zweryfikowane empirycznie przy pisaniu tej
+# dyspozycji: `git ls-remote https://github.com/jabbas/homebudget` zwraca
+# referencje bez żadnego uwierzytelnienia. Stąd brak secretRef (w
+# odróżnieniu od `home-applications` w flux-home-system, które współdzieli
+# sekret `flux-system`, bo flux-homeapps może być prywatne). Patrz
+# decyzja 19 planu wdrożenia (homebudget) dla pełnego uzasadnienia wyboru
+# GitRepository zamiast OCIRepository/ręcznego helm upgrade --install.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: homebudget
+  namespace: homebudget
+spec:
+  interval: 1m0s
+  url: https://github.com/jabbas/homebudget.git
+  ref:
+    branch: main
+    # SHA wdrożenia (Zadanie 15, Krok 1) — musi być TYM SAMYM commitem, który
+    # Tekton właśnie zbudował i opublikował pod trzema tagami obrazów
+    # (decyzja 20). ref.commit ma pierwszeństwo przed ref.branch, więc Flux
+    # NIE śledzi dalszych pushy do main, dopóki ktoś świadomie nie zmieni
+    # tej wartości nowym commitem w tym repozytorium.
+    commit: "1c72e27d7e0c03864d4261fead13457436370dbf"

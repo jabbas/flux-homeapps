@@ -4,6 +4,10 @@ kind: Kustomization
 resources:
   - firecrawl/namespace.yaml
   - firecrawl/release.yaml
+  - homebudget/namespace.yaml
+  - homebudget/repository.yaml
+  - homebudget/release.yaml
+  - homebudget/sealed-secrets.yaml
   - ibakery/namespace.yaml
   - ibakery/repository.yaml
   - ibakery/release.yaml
