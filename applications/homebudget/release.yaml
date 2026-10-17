@@ -15,7 +15,8 @@ spec:
         name: homebudget
         namespace: homebudget
   interval: 1m0s
-  timeout: 10m0s
+  # zimny start (CNPG na iSCSI + migracje + garage-init) — nieudana pierwsza instalacja = odinstalowanie i osierocone PV Retain
+  timeout: 15m0s
   install:
     remediation:
       retries: 3
