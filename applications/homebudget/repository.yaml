@@ -10,15 +10,27 @@ metadata:
   name: homebudget
   namespace: flux-system
 spec:
-  interval: 1m0s
+  interval: 5m0s
   url: ssh://git@github.com/jabbas/homebudget.git
   secretRef:
     name: flux-system
   ref:
-    branch: main
-    # SHA wdrożenia (Zadanie 15, Krok 1) — musi być TYM SAMYM commitem, który
-    # Tekton właśnie zbudował i opublikował pod trzema tagami obrazów
-    # (decyzja 20). ref.commit ma pierwszeństwo przed ref.branch, więc Flux
-    # NIE śledzi dalszych pushy do main, dopóki ktoś świadomie nie zmieni
-    # tej wartości nowym commitem w tym repozytorium.
-    commit: "1c72e27d7e0c03864d4261fead13457436370dbf"
+    # Wdrożenie przypięte TAGIEM gita — semver bez prefiksu "v", taki sam jak
+    # `version` w helm/Chart.yaml. Tag musi wskazywać TEN SAM commit, który
+    # Tekton zbudował i opublikował pod trzema tagami obrazów (pełny SHA,
+    # decyzja 20) — patrz image.tag w release.yaml.
+    #
+    # Celowo NIE ref.commit: source-controller (v1.6.2) przy ref.commit robi
+    # pełny klon repozytorium co każdy interwał (zdiagnozowane 2026-10-17).
+    # Przy ref.tag robi tylko zdalne sprawdzenie i pomija klon, gdy tag się
+    # nie zmienił, a przy zmianie klonuje płytko. Nie dodawać tu też
+    # ref.commit ani ref.branch — commit ma pierwszeństwo przed tagiem.
+    #
+    # Nowa wersja = nowy tag w repozytorium homebudget + zmiana ref.tag tutaj
+    # (oraz image.tag w release.yaml na SHA commita tego tagu).
+    tag: "0.1.0"
+  # Artefakt zawiera wyłącznie katalog helm/ (składnia .gitignore) — HelmRelease
+  # potrzebuje tylko chartu, reszta repo (kod, frontend) tylko by go puchła.
+  ignore: |
+    /*
+    !/helm/
