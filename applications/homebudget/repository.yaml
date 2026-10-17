@@ -1,23 +1,19 @@
 ---
-# Repozytorium PRYWATNE — dostęp przez SSH z kluczem wdrożeniowym (deploy
-# key) TYLKO DO ODCZYTU, zarejestrowanym w GitHub (jabbas/homebudget →
-# Settings → Deploy keys) pod tytułem "flux homebudget (k8s homeapps)".
-# Klucz prywatny istnieje wyłącznie w SealedSecret `homebudget-git`
-# (sealed-secrets.yaml, namespace homebudget). Nie da się użyć sekretu
-# `flux-system` (jak `home-applications` w flux-home-system), bo
-# GitRepository.spec.secretRef nie sięga do innego namespace'u. Patrz
-# decyzja 19 planu wdrożenia (homebudget) dla pełnego uzasadnienia wyboru
-# GitRepository zamiast OCIRepository/ręcznego helm upgrade --install.
+# Repozytorium PRYWATNE. GitRepository stoi w namespace flux-system i używa
+# istniejącego sekretu `flux-system` — ten sam wzorzec co `home-applications`
+# (flux-home-system/flux/cluster/internal-apps.yaml) i firecrawl. Klucz
+# potrzebuje wyłącznie source-controller, nie pody aplikacji. Patrz decyzja 19
+# planu wdrożenia (homebudget) dla wyboru GitRepository zamiast OCIRepository.
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: homebudget
-  namespace: homebudget
+  namespace: flux-system
 spec:
   interval: 1m0s
   url: ssh://git@github.com/jabbas/homebudget.git
   secretRef:
-    name: homebudget-git
+    name: flux-system
   ref:
     branch: main
     # SHA wdrożenia (Zadanie 15, Krok 1) — musi być TYM SAMYM commitem, który

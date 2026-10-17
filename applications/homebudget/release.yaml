@@ -13,7 +13,7 @@ spec:
       sourceRef:
         kind: GitRepository
         name: homebudget
-        namespace: homebudget
+        namespace: flux-system
   interval: 1m0s
   # zimny start (CNPG na iSCSI + migracje + garage-init) — nieudana pierwsza instalacja = odinstalowanie i osierocone PV Retain
   timeout: 15m0s
