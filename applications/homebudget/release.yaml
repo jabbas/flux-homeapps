@@ -64,10 +64,10 @@ spec:
           # api.image.tag/web.image.tag niżej — Tekton taguje obrazy pełnym
           # SHA commita; tagi semver obrazów przyjdą z planem 2. Patrz
           # decyzja 20.
-          tag: "9119fa16bdb3161c28b88bde4b87405b4f8106fe"
+          tag: "d52d82da9399497b7af7df48cbdaaa2656f8fc7f"
     api:
       image:
-        tag: "9119fa16bdb3161c28b88bde4b87405b4f8106fe"
+        tag: "d52d82da9399497b7af7df48cbdaaa2656f8fc7f"
     web:
       image:
-        tag: "9119fa16bdb3161c28b88bde4b87405b4f8106fe"
+        tag: "d52d82da9399497b7af7df48cbdaaa2656f8fc7f"

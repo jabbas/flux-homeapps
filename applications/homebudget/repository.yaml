@@ -28,7 +28,7 @@ spec:
     #
     # Nowa wersja = nowy tag w repozytorium homebudget + zmiana ref.tag tutaj
     # (oraz image.tag w release.yaml na SHA commita tego tagu).
-    tag: "0.1.3"
+    tag: "0.1.4"
   # Artefakt zawiera wyłącznie katalog helm/ (składnia .gitignore) — HelmRelease
   # potrzebuje tylko chartu, reszta repo (kod, frontend) tylko by go puchła.
   ignore: |
