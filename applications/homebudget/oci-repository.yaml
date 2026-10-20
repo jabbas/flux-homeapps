@@ -1,0 +1,28 @@
+# Chart homebudget publikowany przez pipeline wydania (Tekton, .tekton/release.yaml
+# w repozytorium homebudget) pod wersją = tag gita = tag obrazów. HelmRelease
+# czyta go przez chartRef — bez nadpisań image.tag (domyślny tag obrazów w
+# charcie = appVersion = wersja wydania).
+#
+# Pull anonimowy (zot pozwala na anonimowy odczyt) — brak secretRef.
+# CA registry.home: Secret `jabbas-ca` odbity do tego namespace przez reflector
+# (flux-home-system/flux/infrastructure/shared-secrets/jabbas-ca.yaml).
+#
+# Cofnięcie: tymczasowo `ref.tag: "<poprzednia wersja>"` zamiast `ref.semver` —
+# TYLKO dla wydań bez nowej migracji bazy; wydanie z migracją → naprawa do
+# przodu (nowy commit fix = nowa wersja). Wydanie major (>= 1.0.0) wymaga
+# zmiany zakresu semver poniżej.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: homebudget
+  namespace: homebudget
+spec:
+  interval: 2m
+  url: oci://registry.home/charts/homebudget
+  ref:
+    semver: ">=0.1.0 <1.0.0"
+  certSecretRef:
+    name: jabbas-ca
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy

@@ -6,14 +6,9 @@ metadata:
   namespace: homebudget
 spec:
   releaseName: homebudget
-  chart:
-    spec:
-      chart: ./helm
-      reconcileStrategy: Revision
-      sourceRef:
-        kind: GitRepository
-        name: homebudget
-        namespace: flux-system
+  chartRef:
+    kind: OCIRepository
+    name: homebudget
   interval: 1m0s
   # zimny start (CNPG na iSCSI + migracje + garage-init) — nieudana pierwsza instalacja = odinstalowanie i osierocone PV Retain
   timeout: 15m0s
@@ -57,17 +52,3 @@ spec:
           # Oba wolumeny Garage (meta + data). Metadane Garage to SQLite —
           # NIGDY NFS (blokady plikowe na NFS = ciche uszkodzenie bazy).
           storageClassName: zfs-iscsi-db
-      init:
-        image:
-          # Musi być pełnym SHA commita, na który wskazuje
-          # GitRepository.spec.ref.tag (repository.yaml), i tym samym co
-          # api.image.tag/web.image.tag niżej — Tekton taguje obrazy pełnym
-          # SHA commita; tagi semver obrazów przyjdą z planem 2. Patrz
-          # decyzja 20.
-          tag: "d52d82da9399497b7af7df48cbdaaa2656f8fc7f"
-    api:
-      image:
-        tag: "d52d82da9399497b7af7df48cbdaaa2656f8fc7f"
-    web:
-      image:
-        tag: "d52d82da9399497b7af7df48cbdaaa2656f8fc7f"
