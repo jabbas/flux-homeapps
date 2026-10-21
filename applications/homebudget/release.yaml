@@ -6,6 +6,9 @@ metadata:
   namespace: homebudget
 spec:
   releaseName: homebudget
+  # Chart z OCIRepository (oci-repository.yaml), wersja = tag gita homebudget,
+  # bez nadpisań image.tag — plan 2 w repozytorium homebudget:
+  # docs/superpowers/plans/2026-10-20-automatyczne-wydawanie.md (Zadanie 8).
   chartRef:
     kind: OCIRepository
     name: homebudget
@@ -19,11 +22,12 @@ spec:
     remediation:
       retries: 3
   # Token administracyjny i rpc_secret Garage są WARTOŚCIAMI Helma
-  # (garage.subchart.adminToken/rpcSecret — subchart Garage, Zadanie 8,
-  # renderuje je do WŁASNEGO Secretu), nie odwołaniami do sekretu
-  # istniejącego z zewnątrz — stąd valuesFrom+targetPath, nie
-  # secretName+secretKeyRef jak jwtSecret/garage.credentials niżej.
-  # Patrz decyzja 21.
+  # (garage.subchart.adminToken/rpcSecret — subchart Garage renderuje je do
+  # WŁASNEGO Secretu), nie odwołaniami do sekretu istniejącego z zewnątrz —
+  # stąd valuesFrom+targetPath, nie secretName+secretKeyRef jak
+  # jwtSecret/garage.credentials niżej. Patrz Zadanie 8 i decyzja 21 planu
+  # wdrożenia (nie planu 2) w repozytorium homebudget:
+  # docs/superpowers/plans/2026-09-04-wdrozenie-kubernetes.md.
   valuesFrom:
     - kind: Secret
       name: homebudget-garage-admin
