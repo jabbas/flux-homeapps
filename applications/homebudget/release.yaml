@@ -40,6 +40,11 @@ spec:
   values:
     jwtSecret:
       secretName: homebudget-jwt
+    # Kopie zapasowe (plan 3 w repo homebudget, docs/superpowers/specs/2026-10-25-kopie-zapasowe-design.md).
+    # Klasa snapshotów sterownika iSCSI — NIE `democratic-csi` (to sterownik NFS, snapshot nigdy nie byłby gotowy).
+    backup:
+      enabled: true
+      volumeSnapshotClassName: democratic-csi-iscsi
     # Klasa storage'u: blokowa (iSCSI) z polityką Retain — dane przeżywają
     # usunięcie PVC (np. pomyłkowy helm uninstall). Ta sama klasa co zdrowe
     # klastry CNPG w tym klastrze. Chart celowo jej nie narzuca (przenośność),
