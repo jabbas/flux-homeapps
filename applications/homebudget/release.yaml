@@ -40,6 +40,12 @@ spec:
   values:
     jwtSecret:
       secretName: homebudget-jwt
+    # Adres klienta podaje Cloudflare (nagłówek CF-Connecting-IP). Ufamy mu,
+    # bo jedyna droga z internetu do Traefika to tunel Cloudflare — router nie
+    # przekazuje już portów (sprawdzone 2026-10-31) — a Cloudflare odrzuca
+    # zapytania z własnym CF-Connecting-IP podanym przez klienta.
+    # Wyłączenie = usunąć tę wartość (wtedy liczy się adres połączenia TCP).
+    clientIpHeader: CF-Connecting-IP
     # Prawdziwy odczyt paragonów: darmowy poziom Gemini (projekt bez rozliczeń).
     # Model wybrany pomiarem — spec homebudget 2026-10-29 „Wyniki pomiaru”.
     # Wycofanie = `parser.provider: fake` (jeden commit, bez nowego obrazu).
