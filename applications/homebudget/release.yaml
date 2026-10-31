@@ -40,6 +40,14 @@ spec:
   values:
     jwtSecret:
       secretName: homebudget-jwt
+    # Prawdziwy odczyt paragonów: darmowy poziom Gemini (projekt bez rozliczeń).
+    # Model wybrany pomiarem — spec homebudget 2026-10-29 „Wyniki pomiaru”.
+    # Wycofanie = `parser.provider: fake` (jeden commit, bez nowego obrazu).
+    parser:
+      provider: gemini
+      model: gemini-3.5-flash-lite
+      apiKey:
+        secretName: homebudget-parser
     # Kopie zapasowe (plan 3 w repo homebudget, docs/superpowers/specs/2026-10-25-kopie-zapasowe-design.md).
     # Klasa snapshotów sterownika iSCSI — NIE `democratic-csi` (to sterownik NFS, snapshot nigdy nie byłby gotowy).
     backup:
