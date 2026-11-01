@@ -46,6 +46,17 @@ spec:
     # zapytania z własnym CF-Connecting-IP podanym przez klienta.
     # Wyłączenie = usunąć tę wartość (wtedy liczy się adres połączenia TCP).
     clientIpHeader: CF-Connecting-IP
+    # Adres aplikacji w linkach wysyłanych e-mailem (zaproszenia).
+    publicUrl: https://budget.jabbas.eu
+    # E-maile z zaproszeniami: przekaźnik Google Workspace, bez logowania —
+    # dopuszczony po adresie IP domu 185.170.224.141, nadawca z domeny jabbas.eu.
+    # Wyłączenie = email.enabled: false.
+    email:
+      enabled: true
+      host: smtp-relay.gmail.com
+      port: 587
+      security: starttls
+      from: "Domowy Budżet <budget@jabbas.eu>"
     # Prawdziwy odczyt paragonów: darmowy poziom Gemini (projekt bez rozliczeń).
     # Model wybrany pomiarem — spec homebudget 2026-10-29 „Wyniki pomiaru”.
     # Wycofanie = `parser.provider: fake` (jeden commit, bez nowego obrazu).
