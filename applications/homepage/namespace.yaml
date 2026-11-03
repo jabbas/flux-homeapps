@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: homepage
+  # Aplikacja jest bezstanowa i działa jako nieuprzywilejowany użytkownik 101,
+  # więc profil restricted obowiązuje w pełni (egzekwowanie, audyt i ostrzeżenia).
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

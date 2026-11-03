@@ -1,0 +1,12 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: jabbas-helm-charts
+  namespace: homepage
+spec:
+  # Wspólne repozytorium chartów właściciela (GitHub Pages z repozytorium
+  # jabbas/helm-charts); chart homepage trafia tam z wydań repozytorium
+  # homepage-dziegielew.ski.
+  url: https://jabbas.github.io/helm-charts
+  interval: 10m

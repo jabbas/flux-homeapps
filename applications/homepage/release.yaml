@@ -1,0 +1,37 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homepage
+  namespace: homepage
+spec:
+  releaseName: homepage
+  # Chart `homepage` pochodzi z HelmRepository jabbas-helm-charts
+  # (repository.yaml), publikowany z repozytorium homepage-dziegielew.ski.
+  # Nowe wersje wchodzą same: każdy commit feat/fix na main tamtego
+  # repozytorium wydaje wersję 0.x.y, a zakres poniżej ją podchwytuje.
+  # Zakres kończy się przed 1.0.0 — wydanie 1.0.0 wymaga poszerzenia zakresu
+  # tutaj (Renovate z menedżerem `flux` zaproponuje wtedy PR).
+  #
+  # Cofnięcie wersji (aplikacja jest bezstanowa, więc zawsze bezpieczne),
+  # jeden z dwóch sposobów:
+  #   - tymczasowo ustawić `version: "0.x.y"` (poprzednia dobra wersja),
+  #   - wydać commit `fix` z poprawką w repozytorium homepage-dziegielew.ski,
+  #     co da nową wersję.
+  chart:
+    spec:
+      chart: homepage
+      version: ">=0.1.0 <1.0.0"
+      sourceRef:
+        kind: HelmRepository
+        name: jabbas-helm-charts
+        namespace: homepage
+  interval: 1m0s
+  # Domyślne odinstalowanie po nieudanej instalacji jest tu nieszkodliwe —
+  # aplikacja jest bezstanowa.
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3

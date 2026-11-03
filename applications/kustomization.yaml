@@ -8,6 +8,9 @@ resources:
   - homebudget/oci-repository.yaml
   - homebudget/release.yaml
   - homebudget/sealed-secrets.yaml
+  - homepage/namespace.yaml
+  - homepage/repository.yaml
+  - homepage/release.yaml
   #  - ibakery/namespace.yaml
   #  - ibakery/repository.yaml
   #  - ibakery/release.yaml
