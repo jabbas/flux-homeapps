@@ -8,20 +8,21 @@ spec:
   releaseName: homepage
   # Chart `homepage` pochodzi z HelmRepository jabbas-helm-charts
   # (repository.yaml), publikowany z repozytorium homepage-dziegielew.ski.
-  # Nowe wersje wchodzą same: każdy commit feat/fix na main tamtego
-  # repozytorium wydaje wersję 0.x.y, a zakres poniżej ją podchwytuje.
-  # Zakres kończy się przed 1.0.0 — wydanie 1.0.0 wymaga poszerzenia zakresu
-  # tutaj (Renovate z menedżerem `flux` zaproponuje wtedy PR).
+  # Nowe wersje 1.x.y wchodzą same: każdy commit feat/fix na main tamtego
+  # repozytorium wydaje wersję 1.x.y, a zakres poniżej ją podchwytuje.
+  # Zakres kończy się przed 2.0.0 — wydanie 2.0.0 (zmiana niekompatybilna,
+  # stopka `BREAKING CHANGE:`) wymaga poszerzenia zakresu tutaj (Renovate
+  # z menedżerem `flux` zaproponuje wtedy PR).
   #
   # Cofnięcie wersji (aplikacja jest bezstanowa, więc zawsze bezpieczne),
   # jeden z dwóch sposobów:
-  #   - tymczasowo ustawić `version: "0.x.y"` (poprzednia dobra wersja),
+  #   - tymczasowo ustawić `version: "1.x.y"` (poprzednia dobra wersja),
   #   - wydać commit `fix` z poprawką w repozytorium homepage-dziegielew.ski,
   #     co da nową wersję.
   chart:
     spec:
       chart: homepage
-      version: ">=0.1.0 <1.0.0"
+      version: ">=1.0.0 <2.0.0"
       sourceRef:
         kind: HelmRepository
         name: jabbas-helm-charts
