@@ -65,6 +65,13 @@ spec:
       model: gemini-3.5-flash-lite
       apiKey:
         secretName: homebudget-parser
+      # Podpowiedzi kategorii przy odczycie paragonu — włączone po pomiarze
+      # 2026-11-05 (evaluate-category-suggestions, gospodarstwo „Dom”): próg
+      # 0.9 = trafność 93.6% (44/47), pokrycie 68.1%; nowe nazwy 92.7%.
+      # Wycofanie = `enabled: false` (jeden commit, bez nowego obrazu).
+      categorySuggestions:
+        enabled: true
+        minConfidence: "0.9"
     # Kopie zapasowe (plan 3 w repo homebudget, docs/superpowers/specs/2026-10-25-kopie-zapasowe-design.md).
     # Klasa snapshotów sterownika iSCSI — NIE `democratic-csi` (to sterownik NFS, snapshot nigdy nie byłby gotowy).
     backup:
