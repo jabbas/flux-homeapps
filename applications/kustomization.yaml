@@ -5,6 +5,7 @@ resources:
   - firecrawl/namespace.yaml
   - firecrawl/release.yaml
   - homebudget/namespace.yaml
+  - homebudget/ci-access.yaml
   - homebudget/oci-repository.yaml
   - homebudget/release.yaml
   - homebudget/sealed-secrets.yaml

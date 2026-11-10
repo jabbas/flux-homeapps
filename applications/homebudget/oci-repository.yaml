@@ -17,7 +17,11 @@ metadata:
   name: homebudget
   namespace: homebudget
 spec:
-  interval: 2m
+  # 1m: nowe wydanie trafia na produkcję najpóźniej ~1 min po `helm push`
+  # bez ręcznego `flux reconcile`. Sprawdzenie to jedno zapytanie o listę
+  # tagów do lokalnego rejestru (registry.home) — tanie. HelmRelease reaguje
+  # na nowy artefakt od razu (watch), nie czeka na swój `interval`.
+  interval: 1m
   url: oci://registry.home/charts/homebudget
   ref:
     semver: ">=0.1.0 <1.0.0"

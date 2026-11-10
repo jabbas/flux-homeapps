@@ -1,0 +1,43 @@
+# Odczyt stanu wdrożenia dla taska `verify-production` pipeline'u wydania
+# (Tekton, .tekton/release.yaml w repozytorium homebudget). Po wypchnięciu
+# charta task czeka, aż HelmRelease `homebudget` jest Ready z nową wersją
+# charta, a Deploymenty aplikacji działają na obrazach z tagiem tej wersji.
+#
+# PipelineRuny wydania biegną w namespace `ci` jako ServiceAccount
+# `build-homebudget` (flux-home-system, flux/infrastructure/tekton/ci/rbac.yaml).
+# Role leży TUTAJ, a nie w flux-home-system obok reszty RBAC CI: namespace
+# `homebudget` tworzy ta Kustomization (`applications`), a obiekt w
+# nieistniejącym namespace zablokowałby bootstrap całego `tekton-ci`.
+#
+# Najmniejsze uprawnienia: tylko `get`, tylko wymienione obiekty z nazwy
+# (bez `list`/`watch`, bez sekretów, bez podów). To samo konto obsługuje też
+# CI pull requestów (niezrecenzowany kod) — dostaje więc wyłącznie odczyt
+# specyfikacji, która i tak jest w tym repozytorium.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ci-release-verification
+  namespace: homebudget
+rules:
+  - apiGroups: [helm.toolkit.fluxcd.io]
+    resources: [helmreleases]
+    resourceNames: [homebudget]
+    verbs: [get]
+  - apiGroups: [apps]
+    resources: [deployments]
+    resourceNames: [homebudget-api, homebudget-web, homebudget-worker]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ci-release-verification
+  namespace: homebudget
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ci-release-verification
+subjects:
+  - kind: ServiceAccount
+    name: build-homebudget
+    namespace: ci
