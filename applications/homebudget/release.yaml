@@ -57,6 +57,13 @@ spec:
       port: 587
       security: starttls
       from: "Domowy Budżet <budget@jabbas.eu>"
+    # Raport tygodniowy podpowiedzi kategorii (homebudget 0.21.0): worker w
+    # poniedziałek o 7:00 czasu polskiego wysyła go członkom z włączonym
+    # „Raportem tygodniowym” (Ustawienia → Gospodarstwo). Wymaga email.enabled.
+    # Wyłączenie = `enabled: false` (jeden commit, bez nowego obrazu).
+    reports:
+      weekly:
+        enabled: true
     # Prawdziwy odczyt paragonów: darmowy poziom Gemini (projekt bez rozliczeń).
     # Model wybrany pomiarem — spec homebudget 2026-10-29 „Wyniki pomiaru”.
     # Wycofanie = `parser.provider: fake` (jeden commit, bez nowego obrazu).
